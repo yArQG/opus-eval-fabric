@@ -44,6 +44,11 @@ jobs:
             --json-out artifacts/benchmark.json \
             --junit-out artifacts/benchmark.xml
 
+      - name: Dogfood incremental benchmark
+        run: |
+          opus-eval benchmark-incremental benchmarks/dogfood/pr3_ci_action_pinning.json \
+            --json-out artifacts/dogfood-incremental.json
+
       - name: Upload benchmark report
         if: always()
         # actions/upload-artifact v7.0.1

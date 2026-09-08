@@ -79,13 +79,18 @@ Delta = changed_keys(before, after)
 Affected(Delta) = reachable_dependents(Delta)
 ```
 
-A verification receipt may be reused only if none of its declared dependencies lies in `Affected(Delta)`.
+Receipt reuse is explicitly scoped:
+
+- `LOCAL` may reuse only with declared dependencies that do not intersect `Affected(Delta)`;
+- `GLOBAL` invalidates on any observed delta;
+- `UNKNOWN` invalidates on any observed delta and is the default;
+- a `LOCAL` receipt with no declared dependencies also invalidates on change.
 
 ```text
 Eval_(t+1) = Eval(Affected(Delta)) + Reuse(UnchangedReceipts)
 ```
 
-This is an optimization of recomputation, not of epistemic standards. Reuse requires stable dependency identity. Unknown/global dependencies must broaden the invalidation scope rather than silently reuse stale receipts.
+This is an optimization of recomputation, not of epistemic standards. Stable dependency identity is required. Unknown/global dependencies broaden invalidation rather than silently reusing stale receipts. With no observed delta, existing receipts may be reused because the declared state is unchanged.
 
 ## Hard invariants
 
@@ -97,9 +102,9 @@ This is an optimization of recomputation, not of epistemic standards. Reuse requ
 - A postcondition PASS does not retroactively authorize an action that lacked pre-admission.
 - Reuse optimizes repeated verification; it never weakens a required verifier.
 
-## Next real-workflow benchmark
+## Real-workflow promotion gate
 
-The next promotion gate should compare full re-evaluation against delta-based receipt reuse on real pull requests. Measure:
+A historical dogfood fixture now covers the PR #3 CI-action-pinning change. It is structural evidence only. Persistent default promotion still requires full-vs-incremental benchmarks on multiple real pull requests measuring:
 
 1. verifier calls avoided;
 2. wall-clock time;

@@ -11,7 +11,12 @@ from opus_eval_fabric.closed_loop import (
     prepare_change,
     verify_observed_outcome,
 )
-from opus_eval_fabric.incremental import ReceiptDependency, affected_dependents, plan_receipt_reuse
+from opus_eval_fabric.incremental import (
+    DependencyScope,
+    ReceiptDependency,
+    affected_dependents,
+    plan_receipt_reuse,
+)
 from opus_eval_fabric.model import ActionPacket, EvidencePacket, MissionPacket, ModelPacket, Verdict
 from opus_eval_fabric.pcc import Postcondition, ProofCarryingChange, ProofObligation
 
@@ -119,7 +124,7 @@ class ClosedLoopAssuranceTests(unittest.TestCase):
         self.assertEqual(post.verdict, Verdict.BLOCK)
         self.assertEqual(post.lifecycle_state, LifecycleState.BLOCKED)
 
-    def test_incremental_reuse_invalidates_only_affected_receipts(self):
+    def test_incremental_reuse_invalidates_only_affected_local_receipts(self):
         dependents = {
             "source": ("syntax", "tests"),
             "syntax": ("package",),
@@ -127,10 +132,10 @@ class ClosedLoopAssuranceTests(unittest.TestCase):
             "docs": ("docs-check",),
         }
         receipts = (
-            ReceiptDependency("syntax-r", ("syntax",)),
-            ReceiptDependency("release-r", ("release",)),
-            ReceiptDependency("docs-r", ("docs-check",)),
-            ReceiptDependency("authority-r", ("authority",)),
+            ReceiptDependency("syntax-r", ("syntax",), DependencyScope.LOCAL),
+            ReceiptDependency("release-r", ("release",), DependencyScope.LOCAL),
+            ReceiptDependency("docs-r", ("docs-check",), DependencyScope.LOCAL),
+            ReceiptDependency("authority-r", ("authority",), DependencyScope.LOCAL),
         )
         plan = plan_receipt_reuse(
             {"source": "v1", "docs": "same"},
@@ -142,6 +147,27 @@ class ClosedLoopAssuranceTests(unittest.TestCase):
         self.assertEqual(set(plan.affected), {"source", "syntax", "tests", "package", "release"})
         self.assertEqual(set(plan.invalidated_receipts), {"syntax-r", "release-r"})
         self.assertEqual(set(plan.reusable_receipts), {"docs-r", "authority-r"})
+
+    def test_unknown_and_global_scopes_fail_closed_on_any_delta(self):
+        receipts = (
+            ReceiptDependency("unknown-r", (), DependencyScope.UNKNOWN),
+            ReceiptDependency("global-r", (), DependencyScope.GLOBAL),
+            ReceiptDependency("local-no-deps-r", (), DependencyScope.LOCAL),
+        )
+        plan = plan_receipt_reuse(
+            {"a": "v1"},
+            {"a": "v2"},
+            dependents={},
+            receipts=receipts,
+        )
+        self.assertEqual(set(plan.invalidated_receipts), {"unknown-r", "global-r", "local-no-deps-r"})
+        self.assertFalse(plan.reusable_receipts)
+
+    def test_no_delta_reuses_even_unknown_scope(self):
+        receipts = (ReceiptDependency("unknown-r", (), DependencyScope.UNKNOWN),)
+        plan = plan_receipt_reuse({"a": 1}, {"a": 1}, dependents={}, receipts=receipts)
+        self.assertEqual(plan.reusable_receipts, ("unknown-r",))
+        self.assertFalse(plan.invalidated_receipts)
 
     def test_incremental_dependency_cycles_terminate(self):
         affected = affected_dependents(("a",), {"a": ("b",), "b": ("a", "c")})
