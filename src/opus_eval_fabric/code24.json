@@ -1,0 +1,227 @@
+{
+  "schema_version": "0.1",
+  "policy": "metadata-only; lazy adapters; no bulk compiler installation",
+  "languages": [
+    {
+      "id": 1,
+      "language": "Python",
+      "upstream": "python/cpython",
+      "role": "AI/data/automation",
+      "hub_kind": "upstream_or_official_project_repo",
+      "verified_access": "read_pull",
+      "verified_at": "2026-09-08"
+    },
+    {
+      "id": 2,
+      "language": "Rust",
+      "upstream": "rust-lang/rust",
+      "role": "safe systems/performance",
+      "hub_kind": "upstream_or_official_project_repo",
+      "verified_access": "read_pull",
+      "verified_at": "2026-09-08"
+    },
+    {
+      "id": 3,
+      "language": "Go",
+      "upstream": "golang/go",
+      "role": "network/services/concurrency",
+      "hub_kind": "upstream_or_official_project_repo",
+      "verified_access": "read_pull",
+      "verified_at": "2026-09-08"
+    },
+    {
+      "id": 4,
+      "language": "C",
+      "upstream": "gcc-mirror/gcc",
+      "role": "low-level/embedded/legacy",
+      "hub_kind": "upstream_or_official_project_repo",
+      "verified_access": "read_pull",
+      "verified_at": "2026-09-08"
+    },
+    {
+      "id": 5,
+      "language": "C++",
+      "upstream": "llvm/llvm-project",
+      "role": "native/HPC/compiler infrastructure",
+      "hub_kind": "upstream_or_official_project_repo",
+      "verified_access": "read_pull",
+      "verified_at": "2026-09-08"
+    },
+    {
+      "id": 6,
+      "language": "C#",
+      "upstream": "dotnet/roslyn",
+      "role": "Windows/.NET/compiler APIs",
+      "hub_kind": "upstream_or_official_project_repo",
+      "verified_access": "read_pull",
+      "verified_at": "2026-09-08"
+    },
+    {
+      "id": 7,
+      "language": "Java",
+      "upstream": "openjdk/jdk",
+      "role": "JVM/backend",
+      "hub_kind": "upstream_or_official_project_repo",
+      "verified_access": "read_pull",
+      "verified_at": "2026-09-08"
+    },
+    {
+      "id": 8,
+      "language": "Kotlin",
+      "upstream": "JetBrains/kotlin",
+      "role": "JVM/Android/multiplatform",
+      "hub_kind": "upstream_or_official_project_repo",
+      "verified_access": "read_pull",
+      "verified_at": "2026-09-08"
+    },
+    {
+      "id": 9,
+      "language": "JavaScript",
+      "upstream": "nodejs/node",
+      "role": "web/runtime",
+      "hub_kind": "upstream_or_official_project_repo",
+      "verified_access": "read_pull",
+      "verified_at": "2026-09-08"
+    },
+    {
+      "id": 10,
+      "language": "TypeScript",
+      "upstream": "microsoft/TypeScript",
+      "role": "typed web/tooling",
+      "hub_kind": "upstream_or_official_project_repo",
+      "verified_access": "read_pull",
+      "verified_at": "2026-09-08"
+    },
+    {
+      "id": 11,
+      "language": "PHP",
+      "upstream": "php/php-src",
+      "role": "web/legacy",
+      "hub_kind": "upstream_or_official_project_repo",
+      "verified_access": "read_pull",
+      "verified_at": "2026-09-08"
+    },
+    {
+      "id": 12,
+      "language": "PowerShell",
+      "upstream": "PowerShell/PowerShell",
+      "role": "Windows automation",
+      "hub_kind": "upstream_or_official_project_repo",
+      "verified_access": "read_pull",
+      "verified_at": "2026-09-08"
+    },
+    {
+      "id": 13,
+      "language": "Bash",
+      "upstream": "tianon/mirror-bash",
+      "role": "POSIX automation",
+      "hub_kind": "maintained_mirror",
+      "verified_access": "read_pull",
+      "verified_at": "2026-09-08"
+    },
+    {
+      "id": 14,
+      "language": "Lua",
+      "upstream": "lua/lua",
+      "role": "embedded scripting",
+      "hub_kind": "upstream_or_official_project_repo",
+      "verified_access": "read_pull",
+      "verified_at": "2026-09-08"
+    },
+    {
+      "id": 15,
+      "language": "Julia",
+      "upstream": "JuliaLang/julia",
+      "role": "scientific/numerical",
+      "hub_kind": "upstream_or_official_project_repo",
+      "verified_access": "read_pull",
+      "verified_at": "2026-09-08"
+    },
+    {
+      "id": 16,
+      "language": "Zig",
+      "upstream": "ziglang/zig",
+      "role": "modern systems/build",
+      "hub_kind": "upstream_or_official_project_repo",
+      "verified_access": "read_pull",
+      "verified_at": "2026-09-08"
+    },
+    {
+      "id": 17,
+      "language": "Erlang",
+      "upstream": "erlang/otp",
+      "role": "fault-tolerant distributed",
+      "hub_kind": "upstream_or_official_project_repo",
+      "verified_access": "read_pull",
+      "verified_at": "2026-09-08"
+    },
+    {
+      "id": 18,
+      "language": "Elixir",
+      "upstream": "elixir-lang/elixir",
+      "role": "BEAM orchestration",
+      "hub_kind": "upstream_or_official_project_repo",
+      "verified_access": "read_pull",
+      "verified_at": "2026-09-08"
+    },
+    {
+      "id": 19,
+      "language": "Haskell",
+      "upstream": "ghc/ghc",
+      "role": "typed functional/formal",
+      "hub_kind": "upstream_or_official_project_repo",
+      "verified_access": "read_pull",
+      "verified_at": "2026-09-08"
+    },
+    {
+      "id": 20,
+      "language": "OCaml",
+      "upstream": "ocaml/ocaml",
+      "role": "compilers/types",
+      "hub_kind": "upstream_or_official_project_repo",
+      "verified_access": "read_pull",
+      "verified_at": "2026-09-08"
+    },
+    {
+      "id": 21,
+      "language": "Ruby",
+      "upstream": "ruby/ruby",
+      "role": "dynamic scripting",
+      "hub_kind": "upstream_or_official_project_repo",
+      "verified_access": "read_pull",
+      "verified_at": "2026-09-08"
+    },
+    {
+      "id": 22,
+      "language": "Swift",
+      "upstream": "swiftlang/swift",
+      "role": "Apple/native",
+      "hub_kind": "upstream_or_official_project_repo",
+      "verified_access": "read_pull",
+      "verified_at": "2026-09-08"
+    },
+    {
+      "id": 23,
+      "language": "Dart",
+      "upstream": "dart-lang/sdk",
+      "role": "cross-platform UI/runtime",
+      "hub_kind": "upstream_or_official_project_repo",
+      "verified_access": "read_pull",
+      "verified_at": "2026-09-08"
+    },
+    {
+      "id": 24,
+      "language": "WebAssembly",
+      "upstream": "bytecodealliance/wasmtime",
+      "role": "portable sandbox/execution bridge",
+      "hub_kind": "upstream_or_official_project_repo",
+      "verified_access": "read_pull",
+      "verified_at": "2026-09-08"
+    }
+  ],
+  "validation": {
+    "status": "PASS_24_OF_24",
+    "method": "live GitHub repository metadata/read permission checks through connected GitHub tool",
+    "write_note": "public upstreams are read/pull only; write requires a repository/fork where the authenticated user has push permission"
+  }
+}

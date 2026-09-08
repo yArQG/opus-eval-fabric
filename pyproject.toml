@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "opus-eval-fabric"
+version = "0.2.0"
+description = "Cross-domain evaluation and anti-malfunction harness for agentic AI workflows."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [{name = "yArQG"}]
+keywords = ["ai-evaluation", "agentic-ai", "llm-evals", "provenance", "robustness", "verification"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Software Development :: Testing",
+]
+
+[project.scripts]
+opus-eval = "opus_eval_fabric.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+opus_eval_fabric = ["code24.json"]
+
+[project.urls]
+Homepage = "https://github.com/yArQG/opus-eval-fabric"
+Repository = "https://github.com/yArQG/opus-eval-fabric"
+Issues = "https://github.com/yArQG/opus-eval-fabric/issues"

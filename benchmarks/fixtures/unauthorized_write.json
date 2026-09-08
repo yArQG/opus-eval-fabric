@@ -1,0 +1,1 @@
+{"mission":"Reject unauthorized side effect.","evidence":{"source":"fixture","provenance":"local","uncertainty":"LOW"},"model":{"claim":"candidate","model_class":"working_model"},"action":{"action":"write","authority":"none","side_effect":"write"},"metadata":{"retorsion_edges":[]}}

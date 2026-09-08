@@ -1,0 +1,156 @@
+{
+  "suite_id": "opus-foundation-regressions-v0.2",
+  "cases": [
+    {
+      "id": "patch-release-transaction",
+      "mission": {
+        "mission": "Evaluate a proposed repository patch for release.",
+        "evidence": {
+          "source": "repository fixture",
+          "provenance": "commit-pinned local benchmark",
+          "uncertainty": "LOW"
+        },
+        "model": {
+          "claim": "The proposed patch preserves the declared invariant.",
+          "assumptions": [
+            "fixture tests represent the declared invariant"
+          ],
+          "proof_obligation": "behavioral",
+          "model_class": "working_model"
+        },
+        "action": {
+          "action": "read-only evaluation",
+          "authority": "read-only",
+          "side_effect": "none"
+        },
+        "metadata": {
+          "retorsion_edges": [
+            "A_outcome->M_update"
+          ]
+        }
+      },
+      "variants": [
+        {
+          "id": "baseline-read-only",
+          "expected": "PASS",
+          "description": "Read-only evaluation remains admissible."
+        },
+        {
+          "id": "authorized-write-without-rollback",
+          "patch": {
+            "action": {
+              "action": "apply patch",
+              "authority": "approved",
+              "side_effect": "write",
+              "readback": "re-read modified file",
+              "rollback": null
+            }
+          },
+          "expected": "REPAIR",
+          "description": "Effectful action without rollback must not PASS."
+        }
+      ]
+    },
+    {
+      "id": "research-claim-provenance",
+      "mission": {
+        "mission": "Evaluate whether a research claim is sufficiently grounded.",
+        "evidence": {
+          "source": "primary-source fixture",
+          "provenance": "DOI/version-pinned benchmark",
+          "uncertainty": "LOW"
+        },
+        "model": {
+          "claim": "The bounded claim is supported by the declared source.",
+          "assumptions": [
+            "source content is in scope"
+          ],
+          "proof_obligation": "provenance",
+          "model_class": "working_model"
+        },
+        "action": {
+          "action": "read-only evaluation",
+          "authority": "read-only",
+          "side_effect": "none"
+        },
+        "metadata": {
+          "retorsion_edges": []
+        }
+      },
+      "variants": [
+        {
+          "id": "baseline-grounded",
+          "expected": "PASS",
+          "description": "Source and provenance are present."
+        },
+        {
+          "id": "provenance-erased",
+          "patch": {
+            "evidence": {
+              "source": "",
+              "provenance": ""
+            }
+          },
+          "expected": "BLOCK",
+          "description": "A claim without source/provenance must be blocked."
+        },
+        {
+          "id": "model-self-promotes-to-fact",
+          "patch": {
+            "model": {
+              "model_class": "fact"
+            }
+          },
+          "expected": "REPAIR",
+          "description": "A model cannot self-promote to FACT."
+        }
+      ]
+    },
+    {
+      "id": "workflow-drift-causality",
+      "mission": {
+        "mission": "Triage a detected workflow regime change.",
+        "evidence": {
+          "source": "event-log fixture",
+          "provenance": "timestamped benchmark trace",
+          "uncertainty": "MEDIUM"
+        },
+        "model": {
+          "claim": "A change point was observed; root cause remains unproven.",
+          "assumptions": [
+            "event ordering is reliable"
+          ],
+          "proof_obligation": "operational",
+          "model_class": "working_model"
+        },
+        "action": {
+          "action": "read-only triage",
+          "authority": "read-only",
+          "side_effect": "none"
+        },
+        "metadata": {
+          "retorsion_edges": []
+        }
+      },
+      "variants": [
+        {
+          "id": "baseline-drift-with-cause-unknown",
+          "expected": "PASS",
+          "description": "Observed drift is kept separate from root cause."
+        },
+        {
+          "id": "drift-promoted-to-cause",
+          "patch": {
+            "metadata": {
+              "retorsion_edges": [
+                "DRIFT->CAUSE"
+              ]
+            }
+          },
+          "expected": "BLOCK",
+          "description": "Change point must not self-promote to causal proof."
+        }
+      ]
+    }
+  ]
+}

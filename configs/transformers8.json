@@ -1,0 +1,58 @@
+{
+  "schema_version": "0.1",
+  "operators": [
+    {
+      "id": "T0",
+      "neutral": "INGEST",
+      "alias": "CYBERNETRIX",
+      "role": "source/repo/version/provenance"
+    },
+    {
+      "id": "T1",
+      "neutral": "NORMALIZE",
+      "alias": "CYBERTNETREX",
+      "role": "parse/state/IR"
+    },
+    {
+      "id": "T2",
+      "neutral": "REVERSE",
+      "alias": "CYBERNETRAX",
+      "role": "decompose/recover/reverse-engineer"
+    },
+    {
+      "id": "T3",
+      "neutral": "TRANSLATE",
+      "alias": "CYBERNETROX",
+      "role": "semantics/representation/port"
+    },
+    {
+      "id": "T4",
+      "neutral": "TRANSFORM",
+      "alias": "CYBERTRIXTON",
+      "role": "mod/refactor/rebuild/model"
+    },
+    {
+      "id": "T5",
+      "neutral": "PATCH",
+      "alias": "CYBERTREXTON",
+      "role": "fix/upgrade/update/backport"
+    },
+    {
+      "id": "T6",
+      "neutral": "VERIFY",
+      "alias": "CYBERTRAXTON",
+      "role": "lint/build/test/diff/counterexample"
+    },
+    {
+      "id": "T7",
+      "neutral": "RECREATE",
+      "alias": "CYBERTROXTON",
+      "role": "package/restore/release/round-trip"
+    }
+  ],
+  "duality": {
+    "operator": "J(T_i)=T_(7-i)",
+    "property": "J^2=I",
+    "note": "design symmetry, not scientific law"
+  }
+}

@@ -1,0 +1,16 @@
+name: Capability proposal
+description: Propose a distinct capability or verifier.
+title: "[capability] "
+body:
+  - type: textarea
+    id: gap
+    attributes: {label: Capability gap, description: "What can the current system not verify or do?"}
+    validations: {required: true}
+  - type: textarea
+    id: distinct
+    attributes: {label: Distinct value, description: "Why does an existing/deterministic route not solve it?"}
+    validations: {required: true}
+  - type: textarea
+    id: benchmark
+    attributes: {label: Proposed benchmark, description: "How would we know this adds value?"}
+    validations: {required: true}
