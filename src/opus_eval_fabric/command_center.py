@@ -5,10 +5,11 @@ from enum import Enum
 from typing import Any
 
 from .anti_malfunction import audit_result
-from .evaluator import evaluate
+from .assurance_kernel import assure
 from .fingerprint import sha256_json
 from .io import mission_from_dict, validate_shape
 from .mission_compiler import MissionPlan, compile_mission
+from .model import EvalResult
 from .snapshot import build_snapshot
 from .trivector import contacts
 
@@ -28,6 +29,10 @@ class CommandCenterReceipt:
     verdict: str
     core_verdict: str
     planning_admissible: bool
+    projection_status: str
+    hard_boundary_ok: bool
+    assurance_fingerprint: str
+    repair_hints: tuple[str, ...]
     stages: tuple[str, ...]
     mission_fingerprint: str
     snapshot_root: str
@@ -51,29 +56,53 @@ def run_command_center(data: dict[str, Any]) -> tuple[MissionPlan, CommandCenter
     errors = validate_shape(data)
     if errors:
         raise ValueError("; ".join(errors))
+
     plan = compile_mission(data)
     packet = mission_from_dict(data)
-    result = evaluate(packet)
+
+    # K3 -> K4 coupling point: OPUS defines the admissibility boundary.
+    # The kernel never grants authority and never mutates the proposed packet.
+    assurance = assure(
+        packet,
+        planning_admissible=plan.spectra.admissible,
+        rejected_spectra=plan.spectra.rejected,
+    )
+    result = EvalResult(assurance.core_verdict, assurance.checks)
     findings = audit_result(result)
-    effective_verdict = result.verdict.value if plan.spectra.admissible else "UNKNOWN"
+    effective_verdict = assurance.verdict.value
+
     checks_payload = [
         {"name": c.name, "verdict": c.verdict.value, "detail": c.detail}
-        for c in result.checks
+        for c in assurance.checks
     ]
+    repair_hints = tuple(
+        f"{h.tier.value}:{h.target}:{h.operation}"
+        for h in assurance.projection_hints
+    )
+
     snapshot = build_snapshot(
         {
             "mission": data,
             "plan": asdict(plan.signature),
             "planning_admissible": plan.spectra.admissible,
-            "core_verdict": result.verdict.value,
+            "core_verdict": assurance.core_verdict.value,
             "effective_verdict": effective_verdict,
+            "projection_status": assurance.projection_status.value,
+            "hard_boundary_ok": assurance.hard_boundary_ok,
+            "assurance_fingerprint": assurance.packet_fingerprint,
+            "repair_hints": repair_hints,
             "checks": checks_payload,
         }
     )
+
     receipt = CommandCenterReceipt(
         verdict=effective_verdict,
-        core_verdict=result.verdict.value,
+        core_verdict=assurance.core_verdict.value,
         planning_admissible=plan.spectra.admissible,
+        projection_status=assurance.projection_status.value,
+        hard_boundary_ok=assurance.hard_boundary_ok,
+        assurance_fingerprint=assurance.packet_fingerprint,
+        repair_hints=repair_hints,
         stages=tuple(stage.value for stage in NanoStage),
         mission_fingerprint=sha256_json(data),
         snapshot_root=snapshot.root,
