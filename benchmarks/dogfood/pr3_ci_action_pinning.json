@@ -26,18 +26,19 @@
     "file:src/opus_eval_fabric/closed_loop.py": ["source:closed-loop"]
   },
   "receipts": [
-    {"receipt_id": "ci-toolchain-r", "depends_on": ["ci:toolchain"], "scope": "LOCAL"},
-    {"receipt_id": "ci-test-matrix-r", "depends_on": ["ci:test-matrix"], "scope": "LOCAL"},
-    {"receipt_id": "ci-artifact-r", "depends_on": ["ci:artifact"], "scope": "LOCAL"},
-    {"receipt_id": "closed-loop-source-identity-r", "depends_on": ["source:closed-loop"], "scope": "LOCAL"},
-    {"receipt_id": "global-release-policy-r", "depends_on": [], "scope": "GLOBAL"},
-    {"receipt_id": "unknown-legacy-r", "depends_on": [], "scope": "UNKNOWN"}
+    {"receipt_id": "ci-toolchain-r", "depends_on": ["ci:toolchain"], "scope": "LOCAL", "source_snapshot_root": "e022497f94f4842910b753298bf7e0560e3007c9a6e492d706cd115471067928"},
+    {"receipt_id": "ci-test-matrix-r", "depends_on": ["ci:test-matrix"], "scope": "LOCAL", "source_snapshot_root": "e022497f94f4842910b753298bf7e0560e3007c9a6e492d706cd115471067928"},
+    {"receipt_id": "ci-artifact-r", "depends_on": ["ci:artifact"], "scope": "LOCAL", "source_snapshot_root": "e022497f94f4842910b753298bf7e0560e3007c9a6e492d706cd115471067928"},
+    {"receipt_id": "closed-loop-source-identity-r", "depends_on": ["source:closed-loop"], "scope": "LOCAL", "source_snapshot_root": "e022497f94f4842910b753298bf7e0560e3007c9a6e492d706cd115471067928"},
+    {"receipt_id": "global-release-policy-r", "depends_on": [], "scope": "GLOBAL", "source_snapshot_root": "e022497f94f4842910b753298bf7e0560e3007c9a6e492d706cd115471067928"},
+    {"receipt_id": "unknown-legacy-r", "depends_on": [], "scope": "UNKNOWN", "source_snapshot_root": "e022497f94f4842910b753298bf7e0560e3007c9a6e492d706cd115471067928"}
   ],
   "expected": {
     "changed": ["file:.github/workflows/ci.yml"],
     "affected": ["file:.github/workflows/ci.yml", "ci:toolchain", "ci:test-matrix", "ci:artifact"],
+    "before_snapshot_root": "e022497f94f4842910b753298bf7e0560e3007c9a6e492d706cd115471067928",
     "invalidated_receipts": ["ci-toolchain-r", "ci-test-matrix-r", "ci-artifact-r", "global-release-policy-r", "unknown-legacy-r"],
     "reusable_receipts": ["closed-loop-source-identity-r"]
   },
-  "scope_note": "Historical structural dogfood of PR #3. It demonstrates fail-closed dependency-scoped reuse for declared receipts only. It does not measure wall-clock speedup, prove dependency completeness, or establish real-world safety."
+  "scope_note": "Historical structural dogfood of PR #3. It demonstrates fail-closed, snapshot-bound dependency-scoped reuse for declared receipts only. It does not measure wall-clock speedup, prove dependency completeness, or establish real-world safety."
 }

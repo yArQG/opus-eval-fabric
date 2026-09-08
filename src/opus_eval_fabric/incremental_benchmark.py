@@ -11,6 +11,13 @@ def _sorted_strings(values: Any) -> list[str]:
     return sorted(str(x) for x in values)
 
 
+def _scope(value: Any) -> DependencyScope:
+    try:
+        return DependencyScope(str(value).upper())
+    except ValueError:
+        return DependencyScope.UNKNOWN
+
+
 def run_incremental_benchmark(path: str | Path) -> dict[str, Any]:
     """Run a side-effect-free historical/dogfood incremental-reuse fixture."""
     data = json.loads(Path(path).read_text(encoding="utf-8"))
@@ -18,7 +25,12 @@ def run_incremental_benchmark(path: str | Path) -> dict[str, Any]:
         ReceiptDependency(
             receipt_id=str(item["receipt_id"]),
             depends_on=tuple(str(x) for x in item.get("depends_on", ())),
-            scope=DependencyScope(str(item.get("scope", "UNKNOWN")).upper()),
+            scope=_scope(item.get("scope", "UNKNOWN")),
+            source_snapshot_root=(
+                str(item["source_snapshot_root"])
+                if item.get("source_snapshot_root")
+                else None
+            ),
         )
         for item in data.get("receipts", ())
     )
@@ -32,6 +44,7 @@ def run_incremental_benchmark(path: str | Path) -> dict[str, Any]:
     observed = {
         "changed": list(plan.changed),
         "affected": list(plan.affected),
+        "before_snapshot_root": plan.before_snapshot_root,
         "invalidated_receipts": list(plan.invalidated_receipts),
         "reusable_receipts": list(plan.reusable_receipts),
         "decisions": [
@@ -47,6 +60,7 @@ def run_incremental_benchmark(path: str | Path) -> dict[str, Any]:
     comparisons = {
         "changed": _sorted_strings(observed["changed"]) == _sorted_strings(expected.get("changed", ())),
         "affected": _sorted_strings(observed["affected"]) == _sorted_strings(expected.get("affected", ())),
+        "before_snapshot_root": observed["before_snapshot_root"] == expected.get("before_snapshot_root"),
         "invalidated_receipts": _sorted_strings(observed["invalidated_receipts"]) == _sorted_strings(expected.get("invalidated_receipts", ())),
         "reusable_receipts": _sorted_strings(observed["reusable_receipts"]) == _sorted_strings(expected.get("reusable_receipts", ())),
     }
