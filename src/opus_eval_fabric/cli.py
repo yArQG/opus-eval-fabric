@@ -4,14 +4,17 @@ import argparse
 import json
 import platform
 import sys
+from dataclasses import asdict
 from pathlib import Path
 
 from .adapters.python import PythonAdapter
 from .benchmark import run_suite
+from .command_center import run_command_center
 from .contextual import contextual_variants
 from .evaluator import evaluate
 from .fingerprint import sha256_file
 from .io import load_json, mission_from_dict, validate_shape
+from .mission_compiler import compile_mission
 from .reporting import write_json_report, write_junit_report
 
 
@@ -47,6 +50,44 @@ def cmd_run(args):
         ],
     }, indent=2))
     return 0 if result.verdict.value == "PASS" else 1
+
+
+def cmd_plan(args):
+    data = load_json(args.path)
+    errors = validate_shape(data)
+    if errors:
+        print(json.dumps({"status": "BLOCK", "errors": errors}, indent=2))
+        return 2
+    plan = compile_mission(data)
+    out = {
+        "mission": plan.mission,
+        "problem_signature": asdict(plan.signature),
+        "spectra": [x.value for x in plan.spectra.active],
+        "rejected_spectra": list(plan.spectra.rejected),
+        "planning_admissible": plan.spectra.admissible,
+        "requested_capabilities": list(plan.requested_capabilities),
+    }
+    print(json.dumps(out, indent=2, ensure_ascii=False))
+    return 0 if plan.spectra.admissible else 1
+
+
+def cmd_command_center(args):
+    data = load_json(args.path)
+    try:
+        plan, receipt = run_command_center(data)
+    except ValueError as exc:
+        print(json.dumps({"verdict": "BLOCK", "error": str(exc)}, indent=2))
+        return 2
+    out = {
+        "plan": {
+            "mission": plan.mission,
+            "problem_signature": asdict(plan.signature),
+            "requested_capabilities": list(plan.requested_capabilities),
+        },
+        "receipt": asdict(receipt),
+    }
+    print(json.dumps(out, indent=2, ensure_ascii=False))
+    return 0 if receipt.verdict == "PASS" else 1
 
 
 def cmd_code24(_):
@@ -93,6 +134,8 @@ def build_parser():
     x = s.add_parser("doctor"); x.set_defaults(func=cmd_doctor)
     x = s.add_parser("validate"); x.add_argument("path"); x.set_defaults(func=cmd_validate)
     x = s.add_parser("run"); x.add_argument("path"); x.set_defaults(func=cmd_run)
+    x = s.add_parser("plan"); x.add_argument("path"); x.set_defaults(func=cmd_plan)
+    x = s.add_parser("command-center"); x.add_argument("path"); x.set_defaults(func=cmd_command_center)
     x = s.add_parser("code24"); x.set_defaults(func=cmd_code24)
     x = s.add_parser("perturb"); x.add_argument("text"); x.set_defaults(func=cmd_perturb)
     x = s.add_parser("fingerprint"); x.add_argument("path"); x.set_defaults(func=cmd_fingerprint)
