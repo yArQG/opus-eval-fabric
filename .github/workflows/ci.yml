@@ -31,6 +31,8 @@ jobs:
           opus-eval doctor
           opus-eval validate examples/mission.json
           opus-eval run examples/mission.json
+          opus-eval plan examples/mission.json
+          opus-eval command-center examples/mission.json
           opus-eval adapter-python --source src/opus_eval_fabric/evaluator.py
 
       - name: Deterministic regression benchmark
