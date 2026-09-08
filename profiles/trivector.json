@@ -1,0 +1,12 @@
+{
+  "schema_version": "0.1",
+  "axes": [
+    {"id": "E", "name": "Evidence/Observe", "ir": "EIR"},
+    {"id": "M", "name": "Model/Infer", "ir": "SIR"},
+    {"id": "A", "name": "Action/Verify", "ir": "XIR"}
+  ],
+  "ports": 8,
+  "language_capsules": 24,
+  "activation": "sparse/lazy",
+  "note": "three synchronized views of one workflow state, not three independent votes"
+}

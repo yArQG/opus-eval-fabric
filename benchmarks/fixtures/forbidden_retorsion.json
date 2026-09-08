@@ -1,0 +1,1 @@
+{"mission":"Reject a semantic-authority inversion.","evidence":{"source":"fixture","provenance":"local","uncertainty":"LOW"},"model":{"claim":"candidate","model_class":"working_model"},"action":{"action":"read","authority":"read-only","side_effect":"none"},"metadata":{"retorsion_edges":["MODEL->FACT"]}}

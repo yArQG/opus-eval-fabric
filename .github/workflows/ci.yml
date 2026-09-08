@@ -1,0 +1,48 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install editable package
+        run: python -m pip install -e .
+
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Smoke test
+        run: |
+          opus-eval doctor
+          opus-eval validate examples/mission.json
+          opus-eval run examples/mission.json
+          opus-eval adapter-python --source src/opus_eval_fabric/evaluator.py
+
+      - name: Deterministic regression benchmark
+        run: |
+          mkdir -p artifacts
+          opus-eval benchmark benchmarks/suite.json \
+            --json-out artifacts/benchmark.json \
+            --junit-out artifacts/benchmark.xml
+
+      - name: Upload benchmark report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-python-${{ matrix.python-version }}
+          path: artifacts/

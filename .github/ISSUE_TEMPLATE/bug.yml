@@ -1,0 +1,17 @@
+name: Bug report
+description: Report a reproducible defect.
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: invariant
+    attributes: {label: Expected invariant, description: "What should remain true?"}
+    validations: {required: true}
+  - type: textarea
+    id: reproduction
+    attributes: {label: Minimal reproduction}
+    validations: {required: true}
+  - type: textarea
+    id: observed
+    attributes: {label: Observed result}
+    validations: {required: true}

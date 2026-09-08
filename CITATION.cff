@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use OPUS Eval Fabric in research, please cite the repository and release used."
+title: "OPUS Eval Fabric"
+type: software
+authors:
+  - family-names: "yArQG"
+version: 0.2.0
+date-released: 2026-09-08
+license: MIT
+repository-code: "https://github.com/yArQG/opus-eval-fabric"
