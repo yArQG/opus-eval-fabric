@@ -13,6 +13,7 @@ from .command_center import run_command_center
 from .contextual import contextual_variants
 from .evaluator import evaluate
 from .fingerprint import sha256_file
+from .incremental_benchmark import run_incremental_benchmark
 from .io import load_json, mission_from_dict, validate_shape
 from .mission_compiler import compile_mission
 from .reporting import write_json_report, write_junit_report
@@ -127,6 +128,15 @@ def cmd_benchmark(args):
     return 0 if report["summary"]["failed"] == 0 else 1
 
 
+def cmd_benchmark_incremental(args):
+    report = run_incremental_benchmark(args.path)
+    if args.json_out:
+        Path(args.json_out).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.json_out).write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    print(json.dumps(report, indent=2, ensure_ascii=False))
+    return 0 if report["structural_pass"] else 1
+
+
 def build_parser():
     p = argparse.ArgumentParser(prog="opus-eval")
     s = p.add_subparsers(required=True)
@@ -149,6 +159,11 @@ def build_parser():
     x.add_argument("--json-out")
     x.add_argument("--junit-out")
     x.set_defaults(func=cmd_benchmark)
+
+    x = s.add_parser("benchmark-incremental")
+    x.add_argument("path")
+    x.add_argument("--json-out")
+    x.set_defaults(func=cmd_benchmark_incremental)
 
     return p
 
