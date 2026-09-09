@@ -1,0 +1,63 @@
+{
+  "schema_version": "0.1",
+  "benchmark_id": "source-vs-installed-proof-lanes-run-34391439803",
+  "repository": "yArQG/opus-eval-fabric",
+  "branch": "benchmark/proof-lanes-v0.3",
+  "head_sha": "176ad717e9e4aeedd9ea3df3c1cd9be00c80c33a",
+  "workflow_run_id": 34391439803,
+  "observed_at": "2026-09-09T18:50:27Z",
+  "same_runner_per_lane_pair": true,
+  "results": {
+    "3.11": {
+      "job_conclusion": "success",
+      "declared_surface_equivalent": true,
+      "source_command_total_s": 0.5244349139999969,
+      "installed_command_total_s": 0.5140539440000111,
+      "comparisons": {
+        "adapter-python": true,
+        "code24": true,
+        "command-center": true,
+        "doctor": true,
+        "plan": true,
+        "run": true,
+        "validate": true
+      }
+    },
+    "3.12": {
+      "job_conclusion": "success",
+      "declared_surface_equivalent": true,
+      "source_command_total_s": 0.3357986629999985,
+      "installed_command_total_s": 0.3222124330000007,
+      "comparisons": {
+        "adapter-python": true,
+        "code24": true,
+        "command-center": true,
+        "doctor": true,
+        "plan": true,
+        "run": true,
+        "validate": true
+      }
+    },
+    "3.13": {
+      "job_conclusion": "success",
+      "declared_surface_equivalent": true,
+      "source_command_total_s": 0.6000849730000155,
+      "installed_command_total_s": 0.5966915270000044,
+      "comparisons": {
+        "adapter-python": true,
+        "code24": true,
+        "command-center": true,
+        "doctor": true,
+        "plan": true,
+        "run": true,
+        "validate": true
+      }
+    }
+  },
+  "artifact_ids": {
+    "3.11": 10119784853,
+    "3.12": 10119783757,
+    "3.13": 10119784663
+  },
+  "scope_note": "This is observed equivalence on the explicitly compared CLI JSON surface plus successful source and installed unit-test lanes. It does not prove wheel/build reproducibility, packaging completeness, dependency completeness, release equivalence, or that installation can be removed from all CI paths."
+}
