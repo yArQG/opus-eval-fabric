@@ -23,7 +23,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Observe build-tool versions
+      - name: Observe initial build-tool state
         run: |
           python - <<'PY'
           from importlib.metadata import PackageNotFoundError, version
@@ -31,7 +31,21 @@ jobs:
               try:
                   print(f'{name}={version(name)}')
               except PackageNotFoundError:
-                  raise SystemExit(f'missing declared build tool: {name}')
+                  print(f'{name}=MISSING')
+          PY
+
+      - name: Bootstrap declared build tools
+        run: python -m pip install "setuptools>=68" wheel
+
+      - name: Observe satisfied build-tool state
+        run: |
+          python - <<'PY'
+          from importlib.metadata import PackageNotFoundError, version
+          for name in ('setuptools', 'wheel'):
+              try:
+                  print(f'{name}={version(name)}')
+              except PackageNotFoundError:
+                  raise SystemExit(f'missing declared build tool after bootstrap: {name}')
           PY
 
       - name: Install editable package without isolated build env
