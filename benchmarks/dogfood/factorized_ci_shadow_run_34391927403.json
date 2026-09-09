@@ -1,0 +1,35 @@
+{
+  "schema_version": "0.1",
+  "benchmark_id": "factorized-ci-shadow-run-34391927403",
+  "repository": "yArQG/opus-eval-fabric",
+  "head_sha": "2c6d82d950d87c5a0d4cf2636ce25e4707b142ee",
+  "observed_at": "2026-09-09T18:55:39Z",
+  "factorized_run": {
+    "run_id": 34391927403,
+    "conclusion": "success",
+    "created_at": "2026-09-09T18:55:08Z",
+    "completed_observation_at": "2026-09-09T18:55:39Z",
+    "end_to_end_envelope_s": 31,
+    "topology": "source matrix in parallel with one wheel-build job; installed-wheel matrix waits for build"
+  },
+  "concurrent_standard_ci": {
+    "run_id": 34391927256,
+    "conclusion": "success",
+    "created_at": "2026-09-09T18:55:07Z",
+    "completed_observation_at": "2026-09-09T18:55:28Z",
+    "end_to_end_envelope_s": 21
+  },
+  "observed_ratio_factorized_over_standard": 1.4761904761904763,
+  "structural_result": "COUNTEREXAMPLE_TO_NAIVE_TOPOLOGY_FACTORIZATION",
+  "interpretation": [
+    "Logical proof factorization does not imply that splitting proof into more dependent jobs reduces critical-path time.",
+    "The build-once topology introduced a dependency barrier before the installed-wheel matrix and had a longer observed end-to-end envelope in this run.",
+    "Both workflows succeeded, so the negative result is about observed topology/latency, not a correctness failure."
+  ],
+  "hard_boundaries": [
+    "This single concurrent run is not a stable performance benchmark and does not isolate GitHub queueing or runner variance.",
+    "The factorized shadow did not reproduce every benchmark/artifact obligation of the standard CI, so it is not proof-equivalent to the baseline.",
+    "Do not promote this topology as the default based on this run."
+  ],
+  "derived_law": "PROOF_FACTORIZATION_DOES_NOT_IMPLY_EXECUTION_TOPOLOGY_FACTORIZATION"
+}
