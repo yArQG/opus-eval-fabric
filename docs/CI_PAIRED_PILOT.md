@@ -77,3 +77,20 @@ No canonical workflow or package runtime is changed. No recurring automation.
 
 Sources: https://docs.github.com/en/rest/actions/workflow-jobs
 https://pip.pypa.io/en/stable/reference/build-system/
+
+## Observed pilot: run 34397246347
+
+The pilot completed on commit `91c49aea18a1635ba551bcbc5b31c16d7b323472` with 6/6 jobs, 24/24 pairs and 48/48 arms passing. Artifact digests and payload heads were independently checked against GitHub metadata; the machine-readable receipt is `benchmarks/dogfood/paired_install_shadow_run_34397246347.json`.
+
+The measured delta is **explicit minus baseline installation time**, including explicit build-tool bootstrap. Negative means the explicit strategy was faster for that pair.
+
+| Stratum | Pairs | Median delta | Range | Interpretation |
+|---|---:|---:|---:|---|
+| Python 3.11 | 8 | −0.839 s | −1.190…−0.525 s | faster in this observed stratum |
+| Python 3.12 | 8 | −0.225 s | −0.438…−0.045 s | faster in this observed stratum |
+| Python 3.13 | 8 | +0.050 s | −0.022…+1.214 s | neutral/slower; heterogeneous |
+| All pooled | 24 | −0.225 s | −1.190…+1.214 s | descriptive only |
+
+The aggregate has 18 explicit wins and 6 losses, but the 3.13 stratum on runner image `20260907.300.1` is slower (median +0.856 s) while the 3.13 stratum on `20260831.293.1` is near-neutral (+0.021 s). This interaction is sufficient to reject a universal speedup claim. All canonical CI checks passed and `.github/workflows/ci.yml` is unchanged.
+
+Decision: **PROMOTION BLOCKED**. Keep the experiment shadow-only. A future run would need a pre-registered practical threshold, frozen dependency versions, and runner-stratified cold/warm measurements; Python versions must not be pooled into a universal claim.
