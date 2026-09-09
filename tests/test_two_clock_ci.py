@@ -24,10 +24,10 @@ class TwoClockCITests(unittest.TestCase):
             ],
         })
         self.assertEqual(report["end_to_end_s"], 28.0)
-        self.assertEqual(report["critical_compute_s"], 14.0)
-        self.assertEqual(report["max_queue_delay_s"], 14.0)
-        self.assertEqual(report["jobs"][0]["queue_delay_s"], 14.0)
-        self.assertEqual(report["jobs"][0]["compute_duration_s"], 14.0)
+        self.assertEqual(report["max_job_elapsed_s"], 14.0)
+        self.assertEqual(report["max_start_offset_s"], 14.0)
+        self.assertEqual(report["jobs"][0]["start_offset_s"], 14.0)
+        self.assertEqual(report["jobs"][0]["job_elapsed_s"], 14.0)
 
     def test_negative_intervals_fail_closed(self):
         with self.assertRaises(ValueError):

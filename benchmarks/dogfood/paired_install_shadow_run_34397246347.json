@@ -1,0 +1,284 @@
+{
+  "schema_version": "0.1",
+  "evidence_id": "paired-install-shadow-run-34397246347",
+  "repository": "yArQG/opus-eval-fabric",
+  "pull_request": 8,
+  "issue": 7,
+  "head_sha": "91c49aea18a1635ba551bcbc5b31c16d7b323472",
+  "parent_head_sha": "c5b817f3ee5ea15dd3f7d85c81bd3f94d485040f",
+  "workflow_run": {
+    "id": 34397246347,
+    "attempt": 1,
+    "event": "push",
+    "created_at": "2026-09-09T19:48:26Z",
+    "completed_at": "2026-09-09T19:50:52Z",
+    "conclusion": "success",
+    "job_count": 6,
+    "arm_count": 48,
+    "pair_count": 24,
+    "pass_jobs": 6,
+    "pass_arms": 48,
+    "pass_pairs": 24
+  },
+  "canonical_ci": {
+    "unchanged": true,
+    "push_run": {
+      "id": 34397246276,
+      "conclusion": "success"
+    },
+    "pull_request_run": {
+      "id": 34397249042,
+      "conclusion": "success"
+    }
+  },
+  "protocol": {
+    "variants": {
+      "baseline": "pip install -e . (PEP 517 build isolation)",
+      "explicit": "pip install build requirements, then pip install --no-build-isolation -e ."
+    },
+    "build_requirements": [
+      "setuptools>=68",
+      "wheel"
+    ],
+    "fresh_virtualenv_per_arm": true,
+    "pip_cache_disabled": true,
+    "order_balanced": true,
+    "block_0_order": [
+      "baseline",
+      "explicit",
+      "baseline",
+      "explicit"
+    ],
+    "block_1_order": [
+      "explicit",
+      "baseline",
+      "explicit",
+      "baseline"
+    ],
+    "proof_commands": [
+      "unit tests",
+      "doctor",
+      "validate",
+      "run",
+      "plan",
+      "command-center",
+      "adapter-python",
+      "foundation benchmark",
+      "incremental benchmark"
+    ],
+    "caveats": [
+      "upstream network conditions uncontrolled",
+      "dependency resolution is not lockfile-pinned",
+      "24 pairs are clustered in 6 runner jobs, not 24 independent runner samples",
+      "delta measures installation strategy, not isolation flag alone"
+    ],
+    "script_sha256": "d417d95a8339072e6a73e44938c97a91a0c835f8c74f798a468f5350cfefd3af"
+  },
+  "artifact_integrity": {
+    "all_metadata_digests_match": true,
+    "all_payload_heads_match": true,
+    "artifacts": [
+      {
+        "name": "paired-3.13-1",
+        "id": 10122071784,
+        "python": "3.13.15",
+        "runner_image": "20260907.300.1",
+        "pairs": 4,
+        "deltas_s": [
+          0.585266971,
+          1.12670493,
+          1.214081321,
+          0.031054549
+        ],
+        "median_delta_s": 0.8559859505,
+        "range_s": [
+          0.031054549,
+          1.214081321
+        ],
+        "archive_size_bytes": 90020,
+        "digest_sha256": "07b20a121124c937a0fd1f13387fffb983fb284d33853efb6ca8e2ee2651ebf5"
+      },
+      {
+        "name": "paired-3.13-0",
+        "id": 10122056531,
+        "python": "3.13.15",
+        "runner_image": "20260831.293.1",
+        "pairs": 4,
+        "deltas_s": [
+          -0.022201389,
+          -0.00396951,
+          0.054119113,
+          0.046625518
+        ],
+        "median_delta_s": 0.021328004,
+        "range_s": [
+          -0.022201389,
+          0.054119113
+        ],
+        "archive_size_bytes": 90030,
+        "digest_sha256": "41b0f45d35d093ae36d972df357ec5ab68a82f78f9dcd79431068ed8144ef370"
+      },
+      {
+        "name": "paired-3.12-1",
+        "id": 10122055621,
+        "python": "3.12.14",
+        "runner_image": "20260907.300.1",
+        "pairs": 4,
+        "deltas_s": [
+          -0.080477919,
+          -0.438346598,
+          -0.045433547,
+          -0.191756322
+        ],
+        "median_delta_s": -0.1361171205,
+        "range_s": [
+          -0.438346598,
+          -0.045433547
+        ],
+        "archive_size_bytes": 90028,
+        "digest_sha256": "02b4c902ff597c5441a8ef4c179c0af527b228cf3de2cd96ce67d634435a05ab"
+      },
+      {
+        "name": "paired-3.11-1",
+        "id": 10122028281,
+        "python": "3.11.16",
+        "runner_image": "20260907.300.1",
+        "pairs": 4,
+        "deltas_s": [
+          -0.525134987,
+          -0.833699924,
+          -0.844123862,
+          -0.83046665
+        ],
+        "median_delta_s": -0.832083287,
+        "range_s": [
+          -0.844123862,
+          -0.525134987
+        ],
+        "archive_size_bytes": 90233,
+        "digest_sha256": "b6953fdc97a0d902728a67ebbd182fae733021cc326491a175378b6adbcb67b5"
+      },
+      {
+        "name": "paired-3.11-0",
+        "id": 10122020807,
+        "python": "3.11.16",
+        "runner_image": "20260907.300.1",
+        "pairs": 4,
+        "deltas_s": [
+          -1.189776818,
+          -0.829461958,
+          -0.890167505,
+          -0.988174817
+        ],
+        "median_delta_s": -0.939171161,
+        "range_s": [
+          -1.189776818,
+          -0.829461958
+        ],
+        "archive_size_bytes": 90232,
+        "digest_sha256": "22c7671aacb4750b3546300d732e50964beac946825331249243890e5125f1b9"
+      },
+      {
+        "name": "paired-3.12-0",
+        "id": 10122017987,
+        "python": "3.12.14",
+        "runner_image": "20260831.293.1",
+        "pairs": 4,
+        "deltas_s": [
+          -0.285731658,
+          -0.154781451,
+          -0.385017514,
+          -0.25807483
+        ],
+        "median_delta_s": -0.271903244,
+        "range_s": [
+          -0.385017514,
+          -0.154781451
+        ],
+        "archive_size_bytes": 90030,
+        "digest_sha256": "d912afd82f9db4060be69b3dfa5f7f33e0edec4031deb6adb8b516a9891fb90d"
+      }
+    ]
+  },
+  "aggregate": {
+    "all_pairs": 24,
+    "explicit_wins": 18,
+    "ties": 0,
+    "explicit_losses": 6,
+    "median_delta_s": -0.224915576,
+    "mean_delta_s": -0.239122702375,
+    "range_s": [
+      -1.189776818,
+      1.214081321
+    ],
+    "warning": "pooled result is descriptive only; do not treat as universal speedup"
+  },
+  "strata": {
+    "python": {
+      "3.11": {
+        "pairs": 8,
+        "median_delta_s": -0.838911893,
+        "mean_delta_s": -0.866375815125,
+        "range_s": [
+          -1.189776818,
+          -0.525134987
+        ],
+        "wins": 8,
+        "losses": 0
+      },
+      "3.12": {
+        "pairs": 8,
+        "median_delta_s": -0.224915576,
+        "mean_delta_s": -0.229952479875,
+        "range_s": [
+          -0.438346598,
+          -0.045433547
+        ],
+        "wins": 8,
+        "losses": 0
+      },
+      "3.13": {
+        "pairs": 8,
+        "median_delta_s": 0.0503723155,
+        "mean_delta_s": 0.378960187875,
+        "range_s": [
+          -0.022201389,
+          1.214081321
+        ],
+        "wins": 2,
+        "losses": 6
+      }
+    },
+    "runner_image": {
+      "20260831.293.1": {
+        "pairs": 8,
+        "median_delta_s": -0.0884914200000002,
+        "mean_delta_s": -0.126128965125,
+        "range_s": [
+          -0.385017514,
+          0.054119113
+        ],
+        "wins": 6,
+        "losses": 2
+      },
+      "20260907.300.1": {
+        "pairs": 16,
+        "median_delta_s": -0.4817407925,
+        "mean_delta_s": -0.295619571,
+        "range_s": [
+          -1.189776818,
+          1.214081321
+        ],
+        "wins": 12,
+        "losses": 4
+      }
+    }
+  },
+  "decision": {
+    "result": "PROMISING_BUT_HETEROGENEOUS",
+    "promotion": "BLOCKED_PILOT_ONLY",
+    "canonical_ci_change": "NONE",
+    "next_gate": "If continued, pre-register a threshold, freeze dependency versions, and run runner-stratified cold/warm strata. Do not pool Python versions or select only winning runs.",
+    "claim_boundary": "The pilot shows a descriptive installation-time signal, not a stable whole-CI speedup, CPU-time reduction, or proof-equivalent replacement."
+  }
+}
