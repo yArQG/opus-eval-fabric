@@ -82,8 +82,12 @@ def validate_manifest(
             continue
         declared.add(path_text)
         result["declared_files"] += 1
-        candidate = (root_path / Path(*PurePosixPath(path_text).parts)).resolve()
-        if not candidate.is_relative_to(root_path) or candidate.is_symlink() or not candidate.is_file():
+        candidate_raw = root_path / Path(*PurePosixPath(path_text).parts)
+        if candidate_raw.is_symlink():
+            result["errors"].append(f"declared file missing, unsafe or not regular: {path_text}")
+            continue
+        candidate = candidate_raw.resolve()
+        if not candidate.is_relative_to(root_path) or not candidate.is_file():
             result["errors"].append(f"declared file missing, unsafe or not regular: {path_text}")
             continue
         expected_bytes = entry.get("bytes")

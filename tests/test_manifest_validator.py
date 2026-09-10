@@ -57,3 +57,21 @@ class ManifestValidatorTests(unittest.TestCase):
         result = validate_manifest(root, manifest)
         self.assertEqual(result["status"], "FAIL")
         self.assertTrue(any("unsafe manifest path" in item for item in result["errors"]))
+
+    def test_symlinked_declared_file_fails_closed(self):
+        root, manifest = self._fixture()
+        link = root / "payload-link.txt"
+        try:
+            link.symlink_to(root / "payload.txt")
+        except (OSError, NotImplementedError):
+            self.skipTest("symlinks unavailable")
+        data = json.loads(manifest.read_text(encoding="utf-8"))
+        data["files"].append({
+            "path": "payload-link.txt",
+            "bytes": len((root / "payload.txt").read_bytes()),
+            "sha256": hashlib.sha256((root / "payload.txt").read_bytes()).hexdigest(),
+        })
+        manifest.write_text(json.dumps(data), encoding="utf-8")
+        result = validate_manifest(root, manifest)
+        self.assertEqual(result["status"], "FAIL")
+        self.assertTrue(any("payload-link.txt" in item for item in result["errors"]))
