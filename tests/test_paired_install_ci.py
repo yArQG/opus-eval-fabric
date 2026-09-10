@@ -1,5 +1,6 @@
+import json
 import unittest
-from scripts.paired_install_ci import orders, summarize
+from scripts.paired_install_ci import _index_provenance, orders, summarize
 
 
 class PairingTests(unittest.TestCase):
@@ -31,3 +32,14 @@ class PairingTests(unittest.TestCase):
         rows[1]['position'] = 1
         rows[1]['install_total_s'] = float('nan')
         with self.assertRaises(ValueError): summarize(rows)
+
+    def test_index_provenance_redacts_credentials_and_queries(self):
+        receipt = _index_provenance({
+            'PIP_INDEX_URL': 'https://alice:super-secret@example.invalid/simple?token=private',
+            'PIP_EXTRA_INDEX_URL': 'https://mirror.invalid:bad-port/simple',
+        })
+        encoded = json.dumps(receipt)
+        self.assertNotIn('alice', encoded)
+        self.assertNotIn('super-secret', encoded)
+        self.assertNotIn('token=private', encoded)
+        self.assertIn('INVALID', receipt['redacted_fingerprints'])

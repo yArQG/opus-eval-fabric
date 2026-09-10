@@ -31,8 +31,13 @@ def _index_provenance(env):
             parsed = urlsplit(token)
             if parsed.scheme and parsed.hostname:
                 normalized = f'{parsed.scheme.lower()}://{parsed.hostname.lower()}'
-                if parsed.port:
-                    normalized += f':{parsed.port}'
+                try:
+                    port = parsed.port
+                except ValueError:
+                    fingerprints.append('INVALID')
+                    continue
+                if port:
+                    normalized += f':{port}'
                 fingerprints.append(hashlib.sha256(normalized.encode()).hexdigest())
             else:
                 fingerprints.append('INVALID')
