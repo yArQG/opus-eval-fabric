@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import platform
@@ -12,11 +13,41 @@ import sys
 import tempfile
 import time
 import tomllib
+from urllib.parse import urlsplit
+
+
+def _index_provenance(env):
+    """Record package-index provenance without exposing URL credentials."""
+    configured_keys = []
+    fingerprints = []
+    entry_count = 0
+    for key in ('PIP_INDEX_URL', 'PIP_EXTRA_INDEX_URL'):
+        raw = env.get(key, '').strip()
+        if not raw:
+            continue
+        configured_keys.append(key)
+        for token in raw.split():
+            entry_count += 1
+            parsed = urlsplit(token)
+            if parsed.scheme and parsed.hostname:
+                normalized = f'{parsed.scheme.lower()}://{parsed.hostname.lower()}'
+                if parsed.port:
+                    normalized += f':{parsed.port}'
+                fingerprints.append(hashlib.sha256(normalized.encode()).hexdigest())
+            else:
+                fingerprints.append('INVALID')
+    return {
+        'configured_keys': configured_keys,
+        'entry_count': entry_count,
+        'redacted_fingerprints': sorted(fingerprints),
+    }
 
 
 def orders(pairs, block):
     if pairs < 2 or pairs > 10 or pairs % 2:
         raise ValueError('use an even pair count between 2 and 10')
+    if block not in (0, 1):
+        raise ValueError('block must be 0 or 1')
     return [('baseline', 'explicit') if (i + block) % 2 == 0 else ('explicit', 'baseline') for i in range(pairs)]
 
 
@@ -25,16 +56,30 @@ def summarize(rows):
         raise ValueError('incomplete pairs')
     pairs = {}
     for row in rows:
-        if row['status'] != 'PASS' or row['variant'] not in ('baseline', 'explicit'):
+        if not isinstance(row, dict) or row.get('status') != 'PASS' or row.get('variant') not in ('baseline', 'explicit'):
             raise ValueError('failed or unknown arm')
-        arms = pairs.setdefault(row['pair'], {})
+        pair = row.get('pair')
+        position = row.get('position')
+        if type(pair) is not int or pair < 0 or type(position) is not int or position not in (0, 1):
+            raise ValueError('pair and position must be bounded integers')
+        elapsed = row.get('install_total_s')
+        if isinstance(elapsed, bool) or not isinstance(elapsed, (int, float)) or not math.isfinite(elapsed) or elapsed < 0:
+            raise ValueError('install duration must be finite and non-negative')
+        arms = pairs.setdefault(pair, {'_positions': {}})
         if row['variant'] in arms:
             raise ValueError('duplicate arm')
+        if position in arms['_positions']:
+            raise ValueError('duplicate position')
+        arms['_positions'][position] = row['variant']
         arms[row['variant']] = row
+    if set(pairs) != set(range(len(pairs))):
+        raise ValueError('pair identifiers must be contiguous from zero')
     deltas = []
     for arms in pairs.values():
-        if set(arms) != {'baseline', 'explicit'}:
+        if {key for key in arms if key != '_positions'} != {'baseline', 'explicit'}:
             raise ValueError('unpaired evidence')
+        if arms['_positions'] != {0: 'baseline', 1: 'explicit'} and arms['_positions'] != {0: 'explicit', 1: 'baseline'}:
+            raise ValueError('each pair must contain exactly two positions')
         deltas.append(arms['explicit']['install_total_s'] - arms['baseline']['install_total_s'])
     return {'pairs': len(deltas), 'paired_deltas_s': deltas,
             'median_delta_s': statistics.median(deltas), 'min_delta_s': min(deltas),
@@ -54,10 +99,11 @@ def main():
         raise ValueError('checked-out commit does not match GITHUB_SHA')
     config = tomllib.loads((root / 'pyproject.toml').read_text())
     requirements = config['build-system']['requires']
-    report = {'schema_version': '0.1', 'head_sha': head, 'block': args.block,
+    report = {'schema_version': '0.2', 'head_sha': head, 'block': args.block,
               'run_id': os.environ.get('GITHUB_RUN_ID'), 'run_attempt': os.environ.get('GITHUB_RUN_ATTEMPT'),
               'python': sys.version, 'platform': platform.platform(),
               'runner_image': os.environ.get('ImageVersion'), 'build_requirements': requirements,
+              'index_provenance': _index_provenance(os.environ),
               'script_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
               'cache_policy': 'pip cache disabled per command; upstream network caches uncontrolled',
               'status': 'INCOMPLETE', 'rows': [], 'promotion': 'BLOCKED_PILOT_ONLY'}
@@ -80,14 +126,34 @@ def main():
                         row['phases'][label] = (time.perf_counter_ns() - start) / 1e9
                         if result.returncode:
                             raise RuntimeError(f'{variant} {label} failed: {result.returncode}')
+                    def run_capture(label, command):
+                        start = time.perf_counter_ns()
+                        result = subprocess.run(command, cwd=root, env=env, capture_output=True, text=True)
+                        (logdir / f'{pair}-{variant}-{label}.txt').write_text(result.stdout + result.stderr)
+                        row['phases'][label] = (time.perf_counter_ns() - start) / 1e9
+                        if result.returncode:
+                            raise RuntimeError(f'{variant} {label} failed: {result.returncode}')
+                        return result.stdout.strip()
                     run('venv', [sys.executable, '-m', 'venv', str(envdir)])
                     python = str(envdir / 'bin/python')
                     cli = str(envdir / 'bin/opus-eval')
+                    row['runtime'] = {
+                        'python_version': run_capture('python-version', [python, '--version']),
+                        'pip_version': run_capture('pip-version', [python, '-m', 'pip', '--version']),
+                        'index_provenance': _index_provenance(env),
+                    }
                     if variant == 'explicit':
                         run('bootstrap', [python, '-m', 'pip', 'install', *requirements])
                     run('install', [python, '-m', 'pip', 'install', *(['--no-build-isolation'] if variant == 'explicit' else []), '-e', '.'])
                     row['install_total_s'] = row['phases']['install'] + row['phases'].get('bootstrap', 0)
-                    run('versions', [python, '-m', 'pip', 'list', '--format=json'])
+                    versions = run_capture('versions', [python, '-m', 'pip', 'list', '--format=json'])
+                    try:
+                        parsed_versions = json.loads(versions)
+                    except json.JSONDecodeError as exc:
+                        raise RuntimeError(f'{variant} versions output is not JSON: {exc}') from exc
+                    if not isinstance(parsed_versions, list) or any(not isinstance(item, dict) for item in parsed_versions):
+                        raise RuntimeError(f'{variant} versions output is not a package list')
+                    row['installed_versions'] = parsed_versions
                     run('unit', [python, '-m', 'unittest', 'discover', '-s', 'tests', '-v'])
                     commands = [['doctor'], ['validate', 'examples/mission.json'], ['run', 'examples/mission.json'],
                                 ['plan', 'examples/mission.json'], ['command-center', 'examples/mission.json'],

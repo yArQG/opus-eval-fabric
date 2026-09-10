@@ -7,6 +7,8 @@ from pathlib import Path
 
 
 def _ts(value: str) -> datetime:
+    if not isinstance(value, str):
+        raise ValueError('timestamps must be ISO strings')
     result = datetime.fromisoformat(value.replace('Z', '+00:00'))
     if result.utcoffset() is None:
         raise ValueError('timestamps must include a timezone')
@@ -15,13 +17,22 @@ def _ts(value: str) -> datetime:
 
 def analyze(payload: dict) -> dict:
     """Analyze wall intervals; never infer CPU time or scheduler cause."""
+    if not isinstance(payload, dict):
+        raise ValueError('payload must be an object')
+    for key in ('created_at', 'completed_at', 'jobs'):
+        if key not in payload:
+            raise ValueError(f'missing required field: {key}')
     created = _ts(payload['created_at'])
     completed = _ts(payload['completed_at'])
     if completed < created:
         raise ValueError('workflow ends before creation')
     raw = payload['jobs']
-    if not raw:
+    if not isinstance(raw, list) or not raw:
         raise ValueError('no jobs: timing evidence is incomplete')
+    if any(not isinstance(j, dict) for j in raw):
+        raise ValueError('jobs must be objects')
+    if any('name' not in j or 'started_at' not in j or 'completed_at' not in j for j in raw):
+        raise ValueError('jobs require name, started_at and completed_at')
     names = [j['name'] for j in raw]
     if any(not isinstance(n, str) or not n for n in names) or len(set(names)) != len(names):
         raise ValueError('job names must be nonempty and unique')
@@ -34,6 +45,8 @@ def analyze(payload: dict) -> dict:
     dependencies = payload.get('dependencies')
     paths, ready = {}, {}
     if dependencies is not None:
+        if not isinstance(dependencies, dict):
+            raise ValueError('dependencies must be an object')
         if set(dependencies) != set(names):
             raise ValueError('dependencies must enumerate every job, including roots')
         visiting = set()
