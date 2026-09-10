@@ -18,6 +18,7 @@ class PairingTests(unittest.TestCase):
         r = summarize(rows)
         self.assertEqual(r['paired_deltas_s'], [-2, 1])
         self.assertEqual(r['promotion'], 'BLOCKED_PILOT_ONLY')
+        self.assertEqual(summarize(list(reversed(rows)))['paired_deltas_s'], [-2, 1])
         with self.assertRaises(ValueError): summarize(rows[:-1])
         with self.assertRaises(ValueError): summarize(rows + rows)
         rows[0]['status'] = 'FAIL'

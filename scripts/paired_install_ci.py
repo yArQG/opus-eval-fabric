@@ -80,7 +80,8 @@ def summarize(rows):
     if set(pairs) != set(range(len(pairs))):
         raise ValueError('pair identifiers must be contiguous from zero')
     deltas = []
-    for arms in pairs.values():
+    for pair in sorted(pairs):
+        arms = pairs[pair]
         if {key for key in arms if key != '_positions'} != {'baseline', 'explicit'}:
             raise ValueError('unpaired evidence')
         if arms['_positions'] != {0: 'baseline', 1: 'explicit'} and arms['_positions'] != {0: 'explicit', 1: 'baseline'}:
