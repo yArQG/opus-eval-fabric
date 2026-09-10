@@ -51,6 +51,12 @@ of the isolation flag alone. Build requirements come from pyproject.toml.
 
 High-resolution monotonic wall timers record environment creation, explicit
 bootstrap, editable installation, version capture and each verification command.
+Receipt schema 0.2 also records the venv's `python --version`, `pip --version`,
+the parsed `pip list --format=json` inventory, and a credential-free fingerprint
+of configured package-index origins. Raw URLs, credentials, paths and query
+parameters are never written to the receipt. Pair identifiers, positions and
+finite non-negative durations are validated before a descriptive summary is
+produced.
 The primary descriptive installation delta includes bootstrap for the explicit
 arm. Environment creation and verification are separately recorded. Pip logs
 and installed-version inventories are uploaded with benchmark JSON receipts.

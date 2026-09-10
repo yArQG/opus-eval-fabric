@@ -41,6 +41,27 @@ class TwoClockCITests(unittest.TestCase):
                 }],
             })
 
+    def test_malformed_payload_types_fail_closed(self):
+        with self.assertRaises(ValueError):
+            analyze([])
+        with self.assertRaises(ValueError):
+            analyze({
+                "created_at": "2026-09-09T18:59:09Z",
+                "completed_at": "2026-09-09T18:59:20Z",
+                "jobs": [{"name": "missing-times"}],
+            })
+        with self.assertRaises(ValueError):
+            analyze({
+                "created_at": "2026-09-09T18:59:09Z",
+                "completed_at": "2026-09-09T18:59:20Z",
+                "jobs": [{
+                    "name": "job",
+                    "started_at": "2026-09-09T18:59:10Z",
+                    "completed_at": "2026-09-09T18:59:11Z",
+                }],
+                "dependencies": [],
+            })
+
 
 if __name__ == "__main__":
     unittest.main()
