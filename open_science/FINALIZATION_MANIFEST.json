@@ -1,0 +1,43 @@
+{
+  "schema_version": "0.1",
+  "capsule": "open-science-finalization-v0.6",
+  "manifest_scope": "finalization_capsule_only",
+  "canonical_release_manifest_modified": false,
+  "integrated_base_commit": "876b779acef59343485a491bd77630eff302077c",
+  "pre_manifest_branch_head": "843ab7bbbdad4ca8dcc7775a50f7da49eefd4fa9",
+  "identity_scheme": "git_blob_sha1",
+  "files": [
+    {
+      "path": "open_science/README.md",
+      "bytes": 2856,
+      "git_blob_sha1": "20146b5bb67d00ba89526d04a821e83be96f1400"
+    },
+    {
+      "path": "open_science/CAPSULE_INDEX.json",
+      "bytes": 1910,
+      "git_blob_sha1": "0b0deedb1527f92235be7f6bc7d860b17694ef9a"
+    },
+    {
+      "path": "open_science/TOPOLOGY.md",
+      "bytes": 3081,
+      "git_blob_sha1": "b9d985207903fb171b75f08d1208ca79a57271ed"
+    },
+    {
+      "path": "open_science/REPRODUCIBILITY_AND_RESTORE.md",
+      "bytes": 4004,
+      "git_blob_sha1": "056b819e48a2015e7e2bad1c42636deb8384540e"
+    },
+    {
+      "path": "open_science/FINALIZATION_GATE.md",
+      "bytes": 3001,
+      "git_blob_sha1": "8161317168b5aa8c08ca86ce9aae1fc07349e129"
+    }
+  ],
+  "self_reference_policy": "FINALIZATION_MANIFEST.json is intentionally excluded from its own file list to avoid recursive identity construction; verify its blob identity from the containing Git commit/tree.",
+  "status": {
+    "cloud_system_state": "OBSERVED_AND_EXTENDED",
+    "public_git_capsule": "SEALED_BY_BLOB_IDENTITIES",
+    "local_replica": "PENDING_NOT_OBSERVED",
+    "release_promotion": "BLOCKED_UNTIL_GATES"
+  }
+}

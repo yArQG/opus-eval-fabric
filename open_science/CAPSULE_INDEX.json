@@ -1,0 +1,66 @@
+{
+  "schema_version": "0.1",
+  "project": "OPUS Eval Fabric",
+  "capsule": "open-science-finalization-v0.6",
+  "classification": {
+    "phase": "FINALIZATION_PREP",
+    "canonical_authority": "UNCHANGED",
+    "release_promotion": "BLOCKED_UNTIL_GATES",
+    "side_effect_replay": "FORBIDDEN"
+  },
+  "integrated_base": {
+    "branch": "audit/receipt-hardening-v0.5",
+    "commit": "876b779acef59343485a491bd77630eff302077c"
+  },
+  "finalization_branch": "finalize/open-science-pack-v0.6",
+  "lineage": [
+    "bootstrap/v0.2.0",
+    "feature/command-center-v0.3",
+    "feature/closed-loop-assurance-v0.3",
+    "benchmark/dogfood-incremental-v0.3",
+    "benchmark/proof-lanes-v0.3",
+    "benchmark/factorized-ci-shadow-v0.3",
+    "benchmark/paired-timing-v0.4",
+    "audit/receipt-hardening-v0.5",
+    "finalize/open-science-pack-v0.6"
+  ],
+  "shadow_evidence_branches": [
+    "experiment/proof-lanes-shadow-v0.3",
+    "experiment/install-subcost-shadow-v0.3"
+  ],
+  "authority_classes": [
+    "CANONICAL_STABLE",
+    "LIVE_VOLATILE",
+    "DERIVED_EPHEMERAL",
+    "BACKUP_COPY",
+    "REPLICA"
+  ],
+  "separation_rules": [
+    "CONTENT_IDENTITY != LOCATION",
+    "LOCATION != AVAILABILITY",
+    "AVAILABILITY != AUTHORITY",
+    "BACKUP_COPY != CANONICAL_AUTHORITY",
+    "REPLICA != CANONICAL_AUTHORITY",
+    "REPLAY != REEXECUTE_SIDE_EFFECTS",
+    "GREEN_SHADOW_RUN != RELEASE_PROMOTION"
+  ],
+  "replicas": {
+    "public_git": "OBSERVED",
+    "cloud_system_state": "OBSERVED_AND_EXTENDED",
+    "local_replica": "PENDING_NOT_OBSERVED"
+  },
+  "capsule_files": [
+    "README.md",
+    "CAPSULE_INDEX.json",
+    "TOPOLOGY.md",
+    "REPRODUCIBILITY_AND_RESTORE.md",
+    "FINALIZATION_GATE.md",
+    "FINALIZATION_MANIFEST.json"
+  ],
+  "public_private_boundary": {
+    "private_drive_ids_in_public_capsule": false,
+    "credentials_or_tokens": false,
+    "personal_data": false,
+    "private_backup_locations": false
+  }
+}
