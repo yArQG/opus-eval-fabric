@@ -1,0 +1,56 @@
+name: ci
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install -U pip
+      - run: pip install -e '.[test]'
+      - run: pytest
+      - run: opus-eval doctor
+
+  release-artifact-smoke:
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -U pip build
+      - run: python -m build
+      - run: sha256sum dist/* | tee dist/SHA256SUMS
+      - run: python -m venv .venv-smoke
+      - run: .venv-smoke/bin/python -m pip install -U pip
+      - run: .venv-smoke/bin/python -m pip install dist/*.whl
+      - run: .venv-smoke/bin/python -c "import opus_eval_fabric as pkg; assert pkg.__version__ == '0.2.0rc1'"
+      - run: .venv-smoke/bin/opus-eval doctor
+      - run: .venv-smoke/bin/opus-eval eval --goal "artifact smoke" --claim "artifact install works" --evidence-class FACT --source "ci:artifact-smoke"
+      - run: "! .venv-smoke/bin/opus-eval eval --goal 'blocked action' --claim 'action requested' --evidence-class FACT --source 'ci:artifact-smoke' --action --authority REVIEW"
+      - run: "! .venv-smoke/bin/opus-eval select-verifiers unknown/path.txt"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts-${{ github.sha }}
+          path: dist/
+          if-no-files-found: error
+          retention-days: 14
