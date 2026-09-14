@@ -13,14 +13,22 @@ def _normalize(value: Any) -> Any:
     if isinstance(value, Enum):
         return value.value
     if isinstance(value, dict):
-        return {str(k): _normalize(v) for k, v in sorted(value.items(), key=lambda kv: str(kv[0]))}
+        if not all(isinstance(key, str) for key in value):
+            raise TypeError("canonical mappings require string keys")
+        return {key: _normalize(value[key]) for key in sorted(value)}
     if isinstance(value, (list, tuple)):
         return [_normalize(v) for v in value]
     return value
 
 
 def canonical_json(value: Any) -> str:
-    return json.dumps(_normalize(value), sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    return json.dumps(
+        _normalize(value),
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        allow_nan=False,
+    )
 
 
 def canonical_hash(value: Any) -> str:
